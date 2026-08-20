@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# Virtualenv
+food-truck-venv/
+*-venv/
+env/
+
+# Django
+*.log
+db.sqlite3
+staticfiles/
+media/
+
+# Env files
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.pid
+
+# Test/coverage
+.coverage
+htmlcov/
+.pytest_cache/
