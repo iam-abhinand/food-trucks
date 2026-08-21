@@ -16,6 +16,9 @@ django-redis==5.4.0
 elasticsearch==8.13.1
 elasticsearch-dsl==8.13.1
 
+# Filtering
+django-filter==24.2
+
 # Auth
 djangorestframework-simplejwt==5.3.1
 
