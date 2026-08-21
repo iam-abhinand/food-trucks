@@ -6,6 +6,7 @@ import logging
 
 from celery import shared_task
 
+from search.indexing import index_truck
 from trucks.models import FoodTruck
 
 from .datasf_client import DataSFClientError, fetch_food_trucks
@@ -18,12 +19,7 @@ logger = logging.getLogger(__name__)
 def sync_food_trucks(self, limit: int = 1000):
     """
     Fetch food truck records from DataSF and upsert them into the database.
-
-    Upserting (rather than delete-and-recreate) means existing records are
-    updated in place using `external_id` as the natural key, and genuinely
-    new trucks are created. Records that fail to fetch or parse are skipped
-    and logged, not allowed to abort the whole sync.
-
+    and keep the Elasticsearch search index in sync.
     Returns a summary dict of what happened, useful for logging/monitoring.
     """
     logger.info("Starting food truck sync")
@@ -41,6 +37,7 @@ def sync_food_trucks(self, limit: int = 1000):
     created_count = 0
     updated_count = 0
     skipped_count = 0
+    index_error_count = 0
 
     for raw_record in raw_records:
         mapped = map_datasf_record(raw_record)
@@ -49,7 +46,7 @@ def sync_food_trucks(self, limit: int = 1000):
             continue
 
         external_id = mapped.pop("external_id")
-        _, created = FoodTruck.objects.update_or_create(
+        truck, created = FoodTruck.objects.update_or_create(
             external_id=external_id,
             defaults=mapped,
         )
@@ -58,11 +55,24 @@ def sync_food_trucks(self, limit: int = 1000):
         else:
             updated_count += 1
 
+        try:
+            index_truck(truck)
+        except Exception as exc:  # noqa: BLE001
+            # A search-indexing failure shouldn't fail the whole sync —
+            # the source of truth (Postgres) is still correctly updated;
+            # we just log it so it's visible and can be manually re-indexed.
+            index_error_count += 1
+            logger.warning(
+                "Failed to index truck in Elasticsearch",
+                extra={"truck_id": truck.id, "error": str(exc)},
+            )
+
     summary = {
         "total_fetched": len(raw_records),
         "created": created_count,
         "updated": updated_count,
         "skipped": skipped_count,
+        "index_errors": index_error_count,
     }
     logger.info(
         "Food truck sync completed",
@@ -71,6 +81,7 @@ def sync_food_trucks(self, limit: int = 1000):
             "records_created": summary["created"],
             "records_updated": summary["updated"],
             "records_skipped": summary["skipped"],
+            "index_errors": summary["index_errors"],
         },
     )
     return summary
