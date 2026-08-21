@@ -30,7 +30,13 @@ class TestSyncFoodTrucks:
     def test_creates_new_truck_on_first_sync(self, mock_fetch):
         mock_fetch.return_value = [_raw_record(objectid="1")]
         result = sync_food_trucks(limit=10)
-        assert result == {"total_fetched": 1, "created": 1, "updated": 0, "skipped": 0}
+        assert result == {
+            "total_fetched": 1,
+            "created": 1,
+            "updated": 0,
+            "skipped": 0,
+            "index_errors": 0,
+        }
         assert FoodTruck.objects.count() == 1
         assert FoodTruck.objects.get(external_id="1").applicant == "Test Truck"
 
@@ -40,7 +46,13 @@ class TestSyncFoodTrucks:
         sync_food_trucks(limit=10)
         mock_fetch.return_value = [_raw_record(objectid="1", applicant="Renamed Truck")]
         result = sync_food_trucks(limit=10)
-        assert result == {"total_fetched": 1, "created": 0, "updated": 1, "skipped": 0}
+        assert result == {
+            "total_fetched": 1,
+            "created": 0,
+            "updated": 1,
+            "skipped": 0,
+            "index_errors": 0,
+        }
         assert FoodTruck.objects.count() == 1
         assert FoodTruck.objects.get(external_id="1").applicant == "Renamed Truck"
 
@@ -51,7 +63,13 @@ class TestSyncFoodTrucks:
         del bad_record["latitude"]  # will make the mapper return None
         mock_fetch.return_value = [good_record, bad_record]
         result = sync_food_trucks(limit=10)
-        assert result == {"total_fetched": 2, "created": 1, "updated": 0, "skipped": 1}
+        assert result == {
+            "total_fetched": 2,
+            "created": 1,
+            "updated": 0,
+            "skipped": 1,
+            "index_errors": 0,
+        }
         assert FoodTruck.objects.count() == 1
 
     @patch("ingestion.tasks.fetch_food_trucks")
