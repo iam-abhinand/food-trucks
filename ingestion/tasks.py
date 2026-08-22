@@ -27,9 +27,7 @@ def sync_food_trucks(self, limit: int = 1000):
     try:
         raw_records = fetch_food_trucks(limit=limit)
     except DataSFClientError as exc:
-        logger.error(
-            "Food truck sync aborted: could not fetch data", extra={"error": str(exc)}
-        )
+        logger.error("Food truck sync aborted: could not fetch data", extra={"error": str(exc)})
         # Retry with exponential-ish backoff via Celery's built-in retry delay,
         # in case this was a transient network/API issue.
         raise self.retry(exc=exc)

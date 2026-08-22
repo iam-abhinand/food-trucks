@@ -9,11 +9,7 @@ from core.geo import bounding_box, haversine_distance_km
 
 from .filters import FoodTruckFilter
 from .models import FoodTruck
-from .serializers import (
-    FoodTruckSerializer,
-    FoodTruckWithDistanceSerializer,
-    NearbyQuerySerializer,
-)
+from .serializers import FoodTruckSerializer, FoodTruckWithDistanceSerializer, NearbyQuerySerializer
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +55,7 @@ class FoodTruckViewSet(viewsets.ReadOnlyModelViewSet):
         # Precise distance filtering + sorting in Python.
         results = []
         for truck in candidates:
-            distance = haversine_distance_km(
-                lat, lng, float(truck.latitude), float(truck.longitude)
-            )
+            distance = haversine_distance_km(lat, lng, float(truck.latitude), float(truck.longitude))
             if distance <= radius_km:
                 truck.distance_km = round(distance, 3)
                 results.append(truck)

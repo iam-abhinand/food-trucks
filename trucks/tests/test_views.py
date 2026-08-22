@@ -65,9 +65,7 @@ class TestFoodTruckListEndpoint:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["count"] == 1
 
-    def test_invalid_status_filter_value_returns_empty_or_error(
-        self, api_client, sample_trucks
-    ):
+    def test_invalid_status_filter_value_returns_empty_or_error(self, api_client, sample_trucks):
         response = api_client.get("/api/v1/trucks/", {"status": "NOT_A_REAL_STATUS"})
         # django_filter's ChoiceFilter rejects invalid choices via validation,
         # which our custom exception handler wraps consistently.
