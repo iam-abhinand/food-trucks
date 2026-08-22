@@ -52,9 +52,7 @@ def trucks_near_ferry_building():
 
 
 class TestNearbyEndpoint:
-    def test_returns_only_trucks_within_radius(
-        self, api_client, trucks_near_ferry_building
-    ):
+    def test_returns_only_trucks_within_radius(self, api_client, trucks_near_ferry_building):
         response = api_client.get(
             "/api/v1/trucks/nearby/",
             {"lat": 37.7955, "lng": -122.3937, "radius_km": 1},
@@ -64,9 +62,7 @@ class TestNearbyEndpoint:
         assert "Close Truck" in applicants
         assert "Far Truck" not in applicants
 
-    def test_results_sorted_by_distance_ascending(
-        self, api_client, trucks_near_ferry_building
-    ):
+    def test_results_sorted_by_distance_ascending(self, api_client, trucks_near_ferry_building):
         response = api_client.get(
             "/api/v1/trucks/nearby/",
             {"lat": 37.7955, "lng": -122.3937, "radius_km": 50},
@@ -86,9 +82,7 @@ class TestNearbyEndpoint:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_radius_defaults_when_not_provided(
-        self, api_client, trucks_near_ferry_building
-    ):
+    def test_radius_defaults_when_not_provided(self, api_client, trucks_near_ferry_building):
         response = api_client.get(
             "/api/v1/trucks/nearby/",
             {"lat": 37.7955, "lng": -122.3937},
@@ -98,9 +92,7 @@ class TestNearbyEndpoint:
         applicants = [truck["applicant"] for truck in response.data]
         assert "Close Truck" in applicants
 
-    def test_each_result_includes_distance_km(
-        self, api_client, trucks_near_ferry_building
-    ):
+    def test_each_result_includes_distance_km(self, api_client, trucks_near_ferry_building):
         response = api_client.get(
             "/api/v1/trucks/nearby/",
             {"lat": 37.7955, "lng": -122.3937, "radius_km": 1},
@@ -108,3 +100,11 @@ class TestNearbyEndpoint:
         for truck in response.data:
             assert "distance_km" in truck
             assert isinstance(truck["distance_km"], float)
+
+    def test_second_identical_request_hits_cache(self, api_client, trucks_near_ferry_building):
+        params = {"lat": 37.7955, "lng": -122.3937, "radius_km": 1}
+        first_response = api_client.get("/api/v1/trucks/nearby/", params)
+        assert first_response.status_code == status.HTTP_200_OK
+        second_response = api_client.get("/api/v1/trucks/nearby/", params)
+        assert second_response.status_code == status.HTTP_200_OK
+        assert second_response.data == first_response.data
