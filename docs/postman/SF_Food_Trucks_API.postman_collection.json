@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "SF Food Trucks API",
+    "description": "API collection for the SF Food Trucks backend challenge submission. Covers trucks listing/filtering, geo search, autocomplete search, auth, sync, and health check endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "access_token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health/"
+      }
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Obtain Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"your-username\",\n  \"password\": \"your-password\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/token/"
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh\": \"your-refresh-token\"\n}"
+            },
+            "url": "{{base_url}}/api/v1/auth/token/refresh/"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trucks",
+      "item": [
+        {
+          "name": "List Trucks",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/trucks/"
+          }
+        },
+        {
+          "name": "List Trucks - Filter by Status",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/trucks/?status=APPROVED"
+          }
+        },
+        {
+          "name": "List Trucks - Filter by Facility Type",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/trucks/?facility_type=truck"
+          }
+        },
+        {
+          "name": "Get Truck Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/trucks/1/"
+          }
+        },
+        {
+          "name": "Nearby Trucks",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/trucks/nearby/?lat=37.7955&lng=-122.3937&radius_km=1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search",
+      "item": [
+        {
+          "name": "Search Trucks",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/api/v1/search/?q=taco"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sync (Requires Auth)",
+      "item": [
+        {
+          "name": "Trigger Manual Sync",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{access_token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"limit\": 20\n}"
+            },
+            "url": "{{base_url}}/api/v1/sync/"
+          }
+        }
+      ]
+    }
+  ]
+}
