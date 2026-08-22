@@ -40,3 +40,6 @@ black==24.4.2
 isort==5.13.2
 flake8==7.0.0
 pre-commit==3.7.0
+
+# CORS
+django-cors-headers==4.3.1
