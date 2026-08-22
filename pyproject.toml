@@ -1,0 +1,15 @@
+[tool.black]
+line-length = 140
+extend-exclude = '''
+/(
+  food-truck-venv
+  | venv
+  | \.git
+  | migrations
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 140
+skip = ["food-truck-venv", "venv", "migrations"]

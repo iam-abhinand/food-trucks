@@ -36,9 +36,7 @@ def bulk_index_trucks(queryset=None):
         }
         for truck in queryset.iterator()
     )
-    success_count, errors = bulk(
-        es_client, actions, stats_only=False, raise_on_error=False
-    )
+    success_count, errors = bulk(es_client, actions, stats_only=False, raise_on_error=False)
     error_count = len(errors)
     logger.info(
         "Bulk indexed trucks into Elasticsearch",

@@ -30,9 +30,7 @@ def fetch_food_trucks(limit: int = 1000) -> list[dict]:
     url = settings.DATASF_FOOD_TRUCKS_ENDPOINT
     params = {"$limit": limit}
 
-    logger.info(
-        "Fetching food truck data from DataSF", extra={"url": url, "limit": limit}
-    )
+    logger.info("Fetching food truck data from DataSF", extra={"url": url, "limit": limit})
 
     try:
         response = requests.get(url, params=params, timeout=15)
@@ -47,7 +45,5 @@ def fetch_food_trucks(limit: int = 1000) -> list[dict]:
         logger.error("DataSF response was not valid JSON", extra={"error": str(exc)})
         raise DataSFClientError(f"Invalid JSON from DataSF: {exc}") from exc
 
-    logger.info(
-        "Fetched food truck records from DataSF", extra={"record_count": len(data)}
-    )
+    logger.info("Fetched food truck records from DataSF", extra={"record_count": len(data)})
     return data

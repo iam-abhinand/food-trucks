@@ -12,8 +12,4 @@ class Command(BaseCommand):
         create_index_if_not_exists()
         self.stdout.write("Bulk indexing trucks...")
         success_count, error_count = bulk_index_trucks()
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Indexed {success_count} trucks ({error_count} errors)."
-            )
-        )
+        self.stdout.write(self.style.SUCCESS(f"Indexed {success_count} trucks ({error_count} errors)."))

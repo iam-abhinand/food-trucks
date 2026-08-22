@@ -22,9 +22,7 @@ class FoodTruckSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = (
-            fields  # this API is read-only for now; writes happen via ingestion
-        )
+        read_only_fields = fields  # this API is read-only for now; writes happen via ingestion
 
 
 class FoodTruckWithDistanceSerializer(FoodTruckSerializer):

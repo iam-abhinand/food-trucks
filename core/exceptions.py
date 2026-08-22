@@ -25,13 +25,7 @@ def custom_exception_handler(exc, context):
         # rather than leaking a raw traceback to the client.
         logger.exception(
             "Unhandled exception in API view",
-            extra={
-                "view": (
-                    context.get("view").__class__.__name__
-                    if context.get("view")
-                    else None
-                )
-            },
+            extra={"view": (context.get("view").__class__.__name__ if context.get("view") else None)},
         )
         return None  # let Django's default 500 handling take over
 

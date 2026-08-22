@@ -69,13 +69,13 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint with flake8
-        run: flake8 .
+        run: flake8 --max-line-length 140 .
 
       - name: Check formatting with black
-        run: black --check .
+        run: black --check --line-length 140 .
 
       - name: Check import order with isort
-        run: isort --check-only --profile black .
+        run: isort --check-only --profile black --line-length 140 .
 
       - name: Run migrations
         env:
