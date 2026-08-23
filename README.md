@@ -6,7 +6,7 @@ A backend service that helps users find food trucks near a specific location in 
 
 **Live demo:** [https://food-trucks-olive.vercel.app](https://food-trucks-olive.vercel.app)
 **Live API:** [https://food-trucks-api.onrender.com/api/docs/](https://food-trucks-api.onrender.com/api/docs/)
-**Demo video:** _[link added after recording]_
+**Demo video:** https://drive.google.com/file/d/13goV_kowzkD-NtxVEdSEtF-ryIxkGjys/view?usp=drive_link
 
 ## Table of Contents
 - [Architecture](#architecture)
