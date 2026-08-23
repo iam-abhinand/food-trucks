@@ -46,6 +46,21 @@ class TestTriggerSyncView:
         authenticated_client.post("/api/v1/sync/", {})
         mock_sync_task.delay.assert_called_once_with(limit=1000)
 
+    @patch("ingestion.views.sync_food_trucks")
+    def test_runs_synchronously_when_setting_enabled(self, mock_sync_task, authenticated_client, settings):
+        settings.SYNC_RUNS_SYNCHRONOUSLY = True
+        mock_sync_task.return_value = {
+            "total_fetched": 5,
+            "created": 5,
+            "updated": 0,
+            "skipped": 0,
+            "index_errors": 0,
+        }
+        response = authenticated_client.post("/api/v1/sync/", {"limit": 5})
+        assert response.status_code == 200
+        assert response.data["result"]["created"] == 5
+        mock_sync_task.assert_called_once_with(limit=5)
+
 
 class TestTriggerSyncThrottling:
     @patch("ingestion.views.sync_food_trucks")

@@ -116,6 +116,11 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
 }
 
+# Free-tier hosting constraint: no dedicated Celery worker service is
+# deployed, so the sync endpoint runs synchronously instead of via Celery.
+# In an environment with a worker deployed, set this to False.
+SYNC_RUNS_SYNCHRONOUSLY = env.bool("SYNC_RUNS_SYNCHRONOUSLY", default=False)
+
 # --- Celery ---
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://localhost:6379/0")
