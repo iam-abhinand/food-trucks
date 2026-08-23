@@ -1,22 +1,33 @@
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 
-/**
- * Renders trucks as pins on a map, centered on the given lat/lng.
- * Each pin shows a popup with the truck's name and address when clicked.
- */
-function MapView({ trucks, centerLat, centerLng }) {
+function MapClickHandler({ onLocationSelect }) {
+  useMapEvents({
+    click(event) {
+      onLocationSelect(event.latlng.lat, event.latlng.lng);
+    },
+  });
+  return null;
+}
+
+function MapView({ trucks, centerLat, centerLng, onLocationSelect, isPinDropMode }) {
   return (
     <MapContainer
       center={[centerLat, centerLng]}
-      zoom={14}
+      zoom={13}
       style={{ height: "400px", width: "100%" }}
+      className={isPinDropMode ? "map--pin-drop-mode" : ""}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <MapClickHandler onLocationSelect={onLocationSelect} />
+
+      <Marker position={[centerLat, centerLng]}>
+        <Popup>Search center</Popup>
+      </Marker>
+
       {trucks.map((truck) => {
-        // Skip trucks with missing/invalid coordinates rather than crashing the map
         if (!truck.latitude || !truck.longitude) return null;
 
         return (
