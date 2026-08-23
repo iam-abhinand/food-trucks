@@ -136,6 +136,8 @@ CACHES = {
 
 # --- Elasticsearch ---
 ELASTICSEARCH_HOST = env("ELASTICSEARCH_HOST", default="http://localhost:9200")
+ELASTICSEARCH_USERNAME = env("ELASTICSEARCH_USERNAME", default="")
+ELASTICSEARCH_PASSWORD = env("ELASTICSEARCH_PASSWORD", default="")
 
 # --- DataSF ---
 DATASF_FOOD_TRUCKS_ENDPOINT = env(
